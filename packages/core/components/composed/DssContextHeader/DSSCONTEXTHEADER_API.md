@@ -143,8 +143,10 @@ Injetável por qualquer descendente. Fora de um `DssContextHeader` devolve `coll
 | `.dss-context-header__rail-slot` | âncora de um ladrilho |
 | `.dss-context-header__rail-btn` | o ladrilho |
 | `.dss-context-header__rail-badge` | badge de atendimentos abertos |
-| `.dss-context-header__hint-anchor` | contexto de posicionamento da dica |
-| `.dss-context-header__hint` | a dica |
+| `.dss-context-header__hint-anchor` | âncora medida para posicionar a dica (e contexto do badge sobreposto) |
+| `.dss-context-header__hint` | a dica — UMA instância, renderizada no `<body>` (Teleport) em `position: fixed`, para não ser recortada pelos `overflow: hidden` da peça |
+
+**Custom properties de posição** (escritas em tempo de execução pela L1, no `style` da dica): `--dss-context-header-hint-x` e `--dss-context-header-hint-y` — coordenadas de tela da âncora. Não são valor de design; afastamento e camada vêm de tokens (`--dss-spacing-1`/`-2`, `--dss-z-index-tooltip`).
 
 ---
 

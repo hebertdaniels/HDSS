@@ -801,20 +801,26 @@
           "source": "2-composition/_base.scss"
         },
         {
-          "property": "z-index",
-          "token": "--dss-z-index-20",
-          "value": null,
+          "property": "position",
+          "token": null,
+          "value": "fixed",
           "source": "2-composition/_base.scss"
         },
         {
           "property": "inset-block-start",
-          "token": null,
-          "value": "100%",
+          "token": "--dss-context-header-hint-y",
+          "value": null,
           "source": "2-composition/_base.scss"
         },
         {
           "property": "inset-inline-start",
-          "token": "--dss-spacing-0",
+          "token": "--dss-context-header-hint-x",
+          "value": null,
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "z-index",
+          "token": "--dss-z-index-tooltip",
           "value": null,
           "source": "2-composition/_base.scss"
         },
@@ -825,19 +831,7 @@
           "source": "2-composition/_base.scss"
         },
         {
-          "property": "inset-inline-end",
-          "token": null,
-          "value": "100%",
-          "source": "2-composition/_base.scss"
-        },
-        {
           "property": "transform",
-          "token": null,
-          "value": "translateY(-50%)",
-          "source": "2-composition/_base.scss"
-        },
-        {
-          "property": "margin-inline-end",
           "token": "--dss-spacing-2",
           "value": null,
           "source": "2-composition/_base.scss"
@@ -1184,7 +1178,19 @@
         ]
       },
       {
-        "name": "--dss-z-index-20",
+        "name": "--dss-context-header-hint-y",
+        "usedIn": [
+          "default"
+        ]
+      },
+      {
+        "name": "--dss-context-header-hint-x",
+        "usedIn": [
+          "default"
+        ]
+      },
+      {
+        "name": "--dss-z-index-tooltip",
         "usedIn": [
           "default"
         ]

@@ -4,7 +4,7 @@
      Regenerar: `npm run build:adequacao-status` (ou node scripts/build-adequacao-status.cjs)
      Fontes: docs/governance/CERTIFIED_COMPONENTS.md + apps/sandbox/src/TestSuite.vue -->
 
-> **Gerado do disco em 14/10/2026**, não de memória. Fase, categoria e selo saem do
+> **Gerado do disco em 19/10/2026**, não de memória. Fase, categoria e selo saem do
 > `CERTIFIED_COMPONENTS.md`; os artefatos visuais saem do `TestSuite.vue` do sandbox.
 >
 > ⚠️ **Selo ≠ adequado.** São eixos diferentes. Os 88 componentes das Fases 1 e 2 estão
@@ -161,7 +161,7 @@ _Nenhum componente na situação "só Preview Frame" — todo frame registrado t
 
 ## Fora desta contagem
 
-- **Preview Frames sem componente de Fase 1/2 correspondente:** `actionmenu`, `appbar`, `brandlogo`, `container`, `contextheader`, `datacard`, `pageshell`, `sectiontitle`, `suite` — tipicamente Fase 3 (ex.: `DssMultiselectAutocomplete`), que não entra neste placar.
+- **Preview Frames sem componente de Fase 1/2 correspondente:** `actionmenu`, `appbar`, `brandlogo`, `composition`, `container`, `contextheader`, `datacard`, `datatable`, `datatableclaudecode`, `pageshell`, `sectiontitle`, `suite` — tipicamente Fase 3 (ex.: `DssMultiselectAutocomplete`), que não entra neste placar.
 - `DssDataCard` (Fase 3), `DssCadrisCard` e `DssTestPageComplexity` — fixtures/stress test, fora
   do escopo por decisão de governança.
 

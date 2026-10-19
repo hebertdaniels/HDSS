@@ -12,6 +12,7 @@ import { describe, it, expect } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import DssContextHeader from './DssContextHeader.vue'
+import DssTooltip from '../../base/DssTooltip/DssTooltip.vue'
 import { useContextHeader } from './composables'
 
 const GRUPOS = [
@@ -362,17 +363,19 @@ describe('DssContextHeader — marca e atributos', () => {
 
 describe('DssContextHeader — dicas', () => {
   /**
-   * Afere o `v-show` no elemento, não o `isVisible()` do test-utils.
+   * A dica é UMA só e mora no <body> (Teleport): dentro da peça ela era cortada
+   * pelos `overflow: hidden` da raiz e das colunas. Por isso é procurada pelo
+   * componente — o `findComponent` do test-utils atravessa o Teleport —, e não
+   * dentro da âncora.
    *
-   * `isVisible()` recorre aos ancestrais e consulta `getComputedStyle` — e numa
-   * árvore DESANEXADA, que é onde o `mount` monta por padrão, ele devolveu
-   * resultados que não batiam com o DOM: a sonda mostrou `style=""` (visível)
-   * no mesmo instante em que `isVisible()` dizia `false`. O contrato real do
-   * `DssTooltip` é a prop `visible`, que o Vue materializa como
-   * `style="display: none"` — e é isso que se mede aqui.
+   * Afere o `display` do elemento, não o `isVisible()` do test-utils:
+   * `isVisible()` recorre aos ancestrais e consulta `getComputedStyle`, e numa
+   * árvore DESANEXADA devolveu resultados que não batiam com o DOM. O contrato
+   * real do `DssTooltip` é a prop `visible`, que o Vue materializa como
+   * `display: none` — e é isso que se mede aqui.
    */
-  const estaVisivel = (ancora) =>
-    ancora.find('.dss-context-header__hint').element.getAttribute('style') !== 'display: none;'
+  const dica = (w) => w.findComponent(DssTooltip)
+  const estaVisivel = (w) => dica(w).element.style.display !== 'none'
 
   /**
    * Espera o estado chegar, em vez de afirmar depois de UM tick.
@@ -386,43 +389,71 @@ describe('DssContextHeader — dicas', () => {
    * O laço não esconde defeito: se o estado nunca chegar, a última leitura
    * reprova do mesmo jeito.
    */
-  const esperar = async (ancora, esperado) => {
+  const esperar = async (w, esperado) => {
     for (let i = 0; i < 5; i += 1) {
-      if (estaVisivel(ancora) === esperado) return esperado
+      if (estaVisivel(w) === esperado) return esperado
       await nextTick()
     }
-    return estaVisivel(ancora)
+    return estaVisivel(w)
   }
 
   it('a dica nasce invisível e aparece no hover — visible é obrigatório', async () => {
     const w = mount(DssContextHeader, { props: { groups: GRUPOS } })
     const ancora = w.findAll('.dss-context-header__hint-anchor')[0]
-    expect(estaVisivel(ancora)).toBe(false)
+    expect(estaVisivel(w)).toBe(false)
     await ancora.trigger('mouseenter')
-    expect(await esperar(ancora, true)).toBe(true)
+    expect(await esperar(w, true)).toBe(true)
     await ancora.trigger('mouseleave')
-    expect(await esperar(ancora, false)).toBe(false)
+    expect(await esperar(w, false)).toBe(false)
+    w.unmount()
   })
 
   it('a dica também abre por foco — WCAG 1.4.13 vale para teclado', async () => {
     const w = mount(DssContextHeader, { props: { groups: GRUPOS } })
     const ancora = w.findAll('.dss-context-header__hint-anchor')[0]
     await ancora.trigger('focusin')
-    expect(await esperar(ancora, true)).toBe(true)
+    expect(await esperar(w, true)).toBe(true)
     await ancora.trigger('focusout')
-    expect(await esperar(ancora, false)).toBe(false)
+    expect(await esperar(w, false)).toBe(false)
+    w.unmount()
   })
 
-  it('UMA dica por vez', async () => {
-    const w = mount(DssContextHeader, { props: { groups: GRUPOS } })
+  it('UMA dica por vez — e com o texto de quem a abriu', async () => {
+    const w = mount(DssContextHeader, {
+      props: { groups: GRUPOS, detailsTooltip: 'Abrir o cadastro' },
+    })
     const ancoras = w.findAll('.dss-context-header__hint-anchor')
     await ancoras[0].trigger('mouseenter')
     await ancoras[1].trigger('mouseenter')
-    await esperar(ancoras[1], true)
-    const visiveis = w
-      .findAll('.dss-context-header__hint')
-      .filter((d) => d.element.getAttribute('style') !== 'display: none;')
-    expect(visiveis).toHaveLength(1)
+    await esperar(w, true)
+    expect(w.findAllComponents(DssTooltip)).toHaveLength(1)
+    expect(dica(w).text()).toBe('Abrir o cadastro')
+    w.unmount()
+  })
+
+  /**
+   * A correção, travada: a dica não pode voltar para dentro da peça. Dentro
+   * dela, os `overflow: hidden` a recortavam (medido no navegador: "detalhes"
+   * 41% visível, ação do item 18%). O jsdom não calcula recorte — então o que
+   * se afere é a causa: o elemento da dica não é descendente da raiz.
+   */
+  it('a dica é renderizada fora da peça — nenhum recorte do cabeçalho a alcança', async () => {
+    const w = mount(DssContextHeader, { props: { groups: GRUPOS } })
+    await w.findAll('.dss-context-header__hint-anchor')[0].trigger('mouseenter')
+    await esperar(w, true)
+    expect(w.element.contains(dica(w).element)).toBe(false)
+    expect(dica(w).element.parentElement).toBe(document.body)
+    w.unmount()
+  })
+
+  it('a dica recebe a posição medida da âncora como custom property', async () => {
+    const w = mount(DssContextHeader, { props: { groups: GRUPOS } })
+    await w.findAll('.dss-context-header__hint-anchor')[0].trigger('mouseenter')
+    await esperar(w, true)
+    const estilo = dica(w).element.style
+    expect(estilo.getPropertyValue('--dss-context-header-hint-x')).toMatch(/px$/)
+    expect(estilo.getPropertyValue('--dss-context-header-hint-y')).toMatch(/px$/)
+    w.unmount()
   })
 })
 

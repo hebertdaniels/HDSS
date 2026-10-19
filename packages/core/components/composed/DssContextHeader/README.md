@@ -203,7 +203,7 @@ anunciado por `aria-expanded`.
 - **1.4.3** — os tons de status usam canais remapeados por tema. Medido sobre `--dss-surface-default`: claro 6,94:1 (positive) · 8,01:1 (negative) · 5,35:1 (info); escuro 11,75:1 · 7,83:1 · 11,80:1.
 - **1.4.1** — o tom nunca é o único canal: o peso da fonte acompanha a cor.
 - **2.5.5** — botão de registros e ladrilhos do trilho: 44×44px, a caixa visual **é** o alvo. A ação de linha tem 20px visuais e o alvo de 44px no `::before`.
-- **1.4.13** — as dicas abrem por `mouseenter` **e** `focusin`.
+- **1.4.13** — as dicas abrem por `mouseenter` **e** `focusin`. A dica é renderizada no `<body>` e posicionada pela âncora, então nenhum recorte da peça (canto do trilho, retração, truncamento das colunas) a corta.
 - **2.1.1** — todos os controles são `<button>` nativos; não há handler de teclado próprio que possa engolir a tecla.
 
 ---

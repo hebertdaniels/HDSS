@@ -22,9 +22,9 @@
       -->
       <span
         class="dss-context-header__hint-anchor"
-        @mouseenter="mostrarDica('records')"
+        @mouseenter="mostrarDica('records', $event)"
         @mouseleave="esconderDica('records')"
-        @focusin="mostrarDica('records')"
+        @focusin="mostrarDica('records', $event)"
         @focusout="esconderDica('records')"
       >
         <button
@@ -68,13 +68,6 @@
           inline
           decorative
         />
-
-        <DssTooltip
-          :visible="dicaAtiva === 'records'"
-          class="dss-context-header__hint dss-context-header__hint--below"
-        >
-          {{ rotuloDeRegistros }}
-        </DssTooltip>
       </span>
 
       <!--
@@ -91,9 +84,9 @@
 
       <span
         class="dss-context-header__hint-anchor"
-        @mouseenter="mostrarDica('details')"
+        @mouseenter="mostrarDica('details', $event)"
         @mouseleave="esconderDica('details')"
-        @focusin="mostrarDica('details')"
+        @focusin="mostrarDica('details', $event)"
         @focusout="esconderDica('details')"
       >
         <DssButton
@@ -106,13 +99,6 @@
           :label="detailsLabel"
           @click="$emit('open-details')"
         />
-
-        <DssTooltip
-          :visible="dicaAtiva === 'details'"
-          class="dss-context-header__hint dss-context-header__hint--below"
-        >
-          {{ detailsTooltip }}
-        </DssTooltip>
       </span>
     </div>
 
@@ -153,9 +139,9 @@
             <span
               v-if="item.action"
               class="dss-context-header__hint-anchor"
-              @mouseenter="mostrarDica(`item:${item.name}`)"
+              @mouseenter="mostrarDica(`item:${item.name}`, $event)"
               @mouseleave="esconderDica(`item:${item.name}`)"
-              @focusin="mostrarDica(`item:${item.name}`)"
+              @focusin="mostrarDica(`item:${item.name}`, $event)"
               @focusout="esconderDica(`item:${item.name}`)"
             >
               <button
@@ -171,13 +157,6 @@
                   decorative
                 />
               </button>
-
-              <DssTooltip
-                :visible="dicaAtiva === `item:${item.name}`"
-                class="dss-context-header__hint dss-context-header__hint--below"
-              >
-                {{ item.action.label }}
-              </DssTooltip>
             </span>
           </dd>
         </div>
@@ -199,9 +178,9 @@
       <span
         v-if="switchable && !estaRetraido"
         class="dss-context-header__hint-anchor dss-context-header__rail-slot"
-        @mouseenter="mostrarDica('switch')"
+        @mouseenter="mostrarDica('switch', $event)"
         @mouseleave="esconderDica('switch')"
-        @focusin="mostrarDica('switch')"
+        @focusin="mostrarDica('switch', $event)"
         @focusout="esconderDica('switch')"
       >
         <button
@@ -227,21 +206,14 @@
           :label="String(openCount)"
           aria-hidden="true"
         />
-
-        <DssTooltip
-          :visible="dicaAtiva === 'switch'"
-          class="dss-context-header__hint dss-context-header__hint--before"
-        >
-          {{ rotuloDeAlternar }}
-        </DssTooltip>
       </span>
 
       <span
         v-if="creatable && !estaRetraido"
         class="dss-context-header__hint-anchor dss-context-header__rail-slot"
-        @mouseenter="mostrarDica('create')"
+        @mouseenter="mostrarDica('create', $event)"
         @mouseleave="esconderDica('create')"
-        @focusin="mostrarDica('create')"
+        @focusin="mostrarDica('create', $event)"
         @focusout="esconderDica('create')"
       >
         <button
@@ -257,21 +229,14 @@
             decorative
           />
         </button>
-
-        <DssTooltip
-          :visible="dicaAtiva === 'create'"
-          class="dss-context-header__hint dss-context-header__hint--before"
-        >
-          {{ createLabel }}
-        </DssTooltip>
       </span>
 
       <span
         v-if="collapsible"
         class="dss-context-header__hint-anchor dss-context-header__rail-slot"
-        @mouseenter="mostrarDica('toggle')"
+        @mouseenter="mostrarDica('toggle', $event)"
         @mouseleave="esconderDica('toggle')"
-        @focusin="mostrarDica('toggle')"
+        @focusin="mostrarDica('toggle', $event)"
         @focusout="esconderDica('toggle')"
       >
         <button
@@ -292,15 +257,32 @@
             decorative
           />
         </button>
-
-        <DssTooltip
-          :visible="dicaAtiva === 'toggle'"
-          class="dss-context-header__hint dss-context-header__hint--before"
-        >
-          {{ rotuloDoGatilho }}
-        </DssTooltip>
       </span>
     </div>
+    <!-- ================================================================
+         DICA — uma só, fora da peça
+
+         Renderizada no <body>. A raiz recorta (`overflow: hidden`: o canto
+         do trilho e a sanfona da retração), e as colunas de informação
+         também (`__groups`/`__group`: é o que faz o texto truncar). Uma dica
+         posicionada DENTRO da peça era cortada por esses recortes — medido:
+         a de "detalhes" ficava 41% visível e a da ação do item, 18%.
+         Remover os recortes quebraria o truncamento e a retração; tirar a
+         dica de dentro deles não quebra nada.
+
+         UMA instância para todas as âncoras: o texto e o lado vêm de quem
+         abriu. "Uma dica por vez" deixa de ser regra de estado e vira
+         estrutura.
+         ================================================================ -->
+    <Teleport to="body">
+      <DssTooltip
+        :visible="dicaAtiva !== null"
+        :class="['dss-context-header__hint', `dss-context-header__hint--${ladoDaDica}`]"
+        :style="estiloDaDica"
+      >
+        {{ textoDaDica }}
+      </DssTooltip>
+    </Teleport>
   </section>
 </template>
 
@@ -355,7 +337,7 @@
  * @see DSS_GUIA_COMPOSICAO_FASE3.md §1.2 e §1.6
  */
 
-import { computed, ref, toRef, useId } from 'vue'
+import { computed, onBeforeUnmount, ref, toRef, useId, watch } from 'vue'
 
 import { useCollapseHeight } from '../../../../composables/useCollapseHeight'
 
@@ -493,16 +475,94 @@ const rotuloDoGatilho = computed(() =>
  *
  * `focusin`/`focusout` junto com o mouse é requisito da WCAG 1.4.13: a dica
  * precisa aparecer para quem navega por teclado.
+ *
+ * A dica é renderizada no <body> (ver o <Teleport> no template) e posicionada
+ * em `fixed` a partir do retângulo da ÂNCORA que a abriu. Por isso o evento
+ * vem junto: `currentTarget` é a âncora, não o botão dentro dela.
  */
 const dicaAtiva = ref<string | null>(null)
+const ancoraDaDica = ref<HTMLElement | null>(null)
+const posicaoDaDica = ref<{ x: number; y: number } | null>(null)
 
-function mostrarDica(chave: string) {
+/** As dicas do trilho abrem para DENTRO da peça; as demais, para baixo. */
+const DICAS_DO_TRILHO = new Set(['switch', 'create', 'toggle'])
+
+const ladoDaDica = computed<'below' | 'before'>(() =>
+  DICAS_DO_TRILHO.has(dicaAtiva.value ?? '') ? 'before' : 'below',
+)
+
+const textoDaDica = computed(() => {
+  const chave = dicaAtiva.value
+  if (chave === 'records') return rotuloDeRegistros.value
+  if (chave === 'details') return props.detailsTooltip
+  if (chave === 'switch') return rotuloDeAlternar.value
+  if (chave === 'create') return props.createLabel
+  if (chave === 'toggle') return rotuloDoGatilho.value
+  if (chave?.startsWith('item:')) {
+    const nome = chave.slice('item:'.length)
+    for (const grupo of gruposVisiveis.value) {
+      const item = grupo.items.find((i) => i.name === nome)
+      if (item?.action) return item.action.label
+    }
+  }
+  return ''
+})
+
+/**
+ * Coordenadas de TELA, medidas em tempo de execução — não são valor de design
+ * e não viram token. Entram como custom properties, e a 2-composition decide
+ * o resto (afastamento, alinhamento, camada) com tokens.
+ */
+const estiloDaDica = computed(() => {
+  const p = posicaoDaDica.value
+  if (!p) return undefined
+  return {
+    '--dss-context-header-hint-x': `${p.x}px`,
+    '--dss-context-header-hint-y': `${p.y}px`,
+  }
+})
+
+function medirAncora() {
+  const ancora = ancoraDaDica.value
+  if (!ancora) return
+  const r = ancora.getBoundingClientRect()
+  posicaoDaDica.value =
+    ladoDaDica.value === 'before'
+      ? { x: r.left, y: r.top + r.height / 2 }
+      : { x: r.left, y: r.bottom }
+}
+
+function mostrarDica(chave: string, evento?: Event) {
   dicaAtiva.value = chave
+  ancoraDaDica.value = (evento?.currentTarget as HTMLElement | null) ?? null
+  medirAncora()
 }
 
 function esconderDica(chave: string) {
-  if (dicaAtiva.value === chave) dicaAtiva.value = null
+  if (dicaAtiva.value !== chave) return
+  dicaAtiva.value = null
+  ancoraDaDica.value = null
 }
+
+/**
+ * `fixed` não acompanha a página: sem isto a dica ficaria parada no ar se a
+ * tela rolasse com ela aberta. `capture` pega a rolagem de QUALQUER contêiner
+ * (a área de conteúdo do shell rola, não a janela). Só escuta enquanto há
+ * dica aberta.
+ */
+function pararDeAcompanhar() {
+  window.removeEventListener('scroll', medirAncora, true)
+  window.removeEventListener('resize', medirAncora)
+}
+
+watch(dicaAtiva, (chave) => {
+  pararDeAcompanhar()
+  if (chave === null || typeof window === 'undefined') return
+  window.addEventListener('scroll', medirAncora, { capture: true, passive: true })
+  window.addEventListener('resize', medirAncora, { passive: true })
+})
+
+onBeforeUnmount(pararDeAcompanhar)
 
 // ── Classes ──────────────────────────────────────────────────────────────
 const headerClasses = computed(() => [

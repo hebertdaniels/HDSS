@@ -376,37 +376,53 @@
 // DICAS
 // --------------------------------------------------------------------------
 
-// Âncora de posicionamento. O `DssTooltip` declara posicionamento FORA DE
-// ESCOPO — quem posiciona é o host, e o host é este composto. A regra vive
-// aqui, na camada do PAI, nunca injetada no filho com `:deep()`.
+// A âncora é o elemento MEDIDO para posicionar a dica (e o contexto do badge
+// sobreposto). O `DssTooltip` declara posicionamento FORA DE ESCOPO — quem
+// posiciona é o host, e o host é este composto. A regra vive aqui, na camada
+// do PAI, nunca injetada no filho com `:deep()`.
 .dss-context-header__hint-anchor {
   position: relative;
   display: inline-flex;
   align-items: center;
 }
 
+// A dica é renderizada no <body> e posicionada em `fixed` pelas coordenadas
+// de tela da âncora (`--dss-context-header-hint-x/y`, escritas pela L1).
+//
+// Antes era `absolute` dentro da peça e era CORTADA: a raiz tem
+// `overflow: hidden` (canto do trilho, sanfona da retração) e as colunas de
+// informação também (é o que trunca o texto). Medido: a dica de "detalhes"
+// ficava 41% visível e a da ação do item, 18%.
+//
+// Fora da peça, ela também deixa de depender do contexto de empilhamento da
+// página: por isso a camada passa de `z-index-20` (local) para a de tooltip.
 .dss-context-header__hint {
-  position: absolute;
-  z-index: var(--dss-z-index-20);
+  // Canais de posição. Declarados aqui com valor neutro para o canal ter
+  // definição no próprio componente (gate de token fantasma); o valor real
+  // chega pelo `style` inline que a L1 escreve, e inline vence esta regra.
+  --dss-context-header-hint-x: var(--dss-spacing-0);
+  --dss-context-header-hint-y: var(--dss-spacing-0);
+
+  position: fixed;
+  inset-block-start: var(--dss-context-header-hint-y);
+  inset-inline-start: var(--dss-context-header-hint-x);
+  z-index: var(--dss-z-index-tooltip);
   white-space: nowrap;
   // Fora do fluxo e sem alvo: a dica não pode roubar o ponteiro do controle
   // que a abriu — o `mouseleave` dispararia ao entrar nela.
   pointer-events: none;
 }
 
+// Y = base da âncora; X = borda inicial da âncora.
 .dss-context-header__hint--below {
-  inset-block-start: 100%;
-  inset-inline-start: var(--dss-spacing-0);
   margin-block-start: var(--dss-spacing-1);
 }
 
 // As dicas do trilho abrem para DENTRO da peça: o trilho encosta na borda
 // direita da tela em telas estreitas, e uma dica à direita sairia do viewport.
+// Y = meio da âncora; X = borda inicial da âncora — a dica termina nela.
 .dss-context-header__hint--before {
-  inset-inline-end: 100%;
-  inset-block-start: 50%;
-  transform: translateY(-50%);
-  margin-inline-end: var(--dss-spacing-2);
+  transform: translate(calc(-100% - var(--dss-spacing-2)), -50%);
 }
 
 // --------------------------------------------------------------------------
