@@ -13,7 +13,11 @@
    Fonte canônica: derivado da página DssSelect aprovada (jun/2026).
 ═══════════════════════════════════════════════════════════════════════════ */
 
-.pg-page {
+/* Variáveis da casca. Valem também para `.pg-brand-switch` (PgBrandPills),
+   o seletor de marca que as páginas de PATTERN usam fora do PlaygroundLayout —
+   um seletor só, as mesmas pills, as mesmas variáveis. */
+.pg-page,
+.pg-brand-switch {
   /* Accent canônico do template */
   --pg-accent: #1d4971;
   --pg-accent-12: color-mix(in srgb, #1d4971 12%, transparent);
@@ -23,6 +27,9 @@
   --pg-radius-sm: 3px;
   --pg-radius: 5px;
   --pg-radius-lg: 7px;
+}
+
+.pg-page {
   /* Altura aproximada do hero sticky compacto — usada p/ alinhar nav e scroll */
   --pg-hero-h: 60px;
 
@@ -615,6 +622,11 @@
 }
 
 /* ── DARK MODE ─────────────────────────────────────────────────────────── */
+/* O seletor de marca fora do PlaygroundLayout herda o tema da raiz da página. */
+[data-theme="dark"] .pg-brand-switch {
+  --pg-accent: #1e71be;
+}
+
 .pg-page[data-theme="dark"] {
   /* Em dark mode o accent #1d4971 (escuro) tem baixo contraste sobre fundos
      escuros — troca para #1e71be (mais claro). Todos os usos referenciam

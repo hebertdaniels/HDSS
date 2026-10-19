@@ -1291,6 +1291,11 @@ const iconeSituacao  = (s: Situacao) => situacoes[s].icone
     text-align: left;
     padding: var(--dss-spacing-2) var(--dss-spacing-3);
     white-space: nowrap;
+
+    // O `text-align: left` acima (0,1,2) vencia o `&__right` (0,1,0) também no
+    // <th>: as colunas numéricas e "Ações" tinham o valor à direita e o
+    // rótulo à esquerda. O cabeçalho acompanha a coluna.
+    &.cn-table__right { text-align: right; }
   }
 
   tbody td {

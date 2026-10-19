@@ -50,20 +50,7 @@
 
         <!-- Controles: brand pills + ações -->
         <div class="pg-hero__controls">
-          <div class="pg-brand-pills" role="radiogroup" aria-label="Selecionar brand">
-            <button
-              v-for="b in BRANDS"
-              :key="b.value || 'neutral'"
-              type="button"
-              role="radio"
-              :aria-checked="activeBrand === b.value"
-              :class="['pg-pill', `pg-pill--${b.value || 'neutral'}`, { 'is-active': activeBrand === b.value }]"
-              @click="activeBrand = b.value"
-            >
-              <span class="pg-pill__dot" aria-hidden="true"></span>
-              {{ b.label }}
-            </button>
-          </div>
+          <PgBrandPills v-model="activeBrand" neutral aria-label="Selecionar brand" />
 
           <div class="pg-hero__actions">
             <button
@@ -229,6 +216,7 @@
 <script setup lang="ts">
 import { ref, computed, provide, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import './playground.scss'
+import PgBrandPills from './PgBrandPills.vue'
 import PreviewFrame from '../preview/PreviewFrame.vue'
 
 interface SectionMeta { id: string; index: string; title: string }
@@ -247,13 +235,6 @@ const props = withDefaults(defineProps<{
 })
 
 // ── Estado universal da casca ──────────────────────────────────────────────
-const BRANDS = [
-  { label: 'Neutro', value: '' },
-  { label: 'Hub',    value: 'hub' },
-  { label: 'Water',  value: 'water' },
-  { label: 'Waste',  value: 'waste' },
-]
-
 const activeBrand = ref('')
 const isDark = ref(false)
 const density = ref<'comfortable' | 'compact'>('comfortable')

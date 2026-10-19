@@ -1,5 +1,11 @@
 <template>
-  <div class="dt-test" :data-theme="theme" :data-brand="brand">
+  <!--
+    ESCOPO DOS SELETORES — mesma regra do PlaygroundLayout: data-theme na raiz;
+    data-brand só no CONTEÚDO (.dt-page). A barra do sandbox fica fora.
+    O conteúdo segue a casca dos patterns (DssAppBar + DssPageShell); a tabela
+    NÃO recebe `brand`, para as ações manterem o peso semântico.
+  -->
+  <div class="dt-test" :data-theme="theme">
     <div class="dt-devbar" role="group" aria-label="Sandbox — estado da tabela">
       <div class="dt-devbar__states">
         <span class="dt-devbar__label">sandbox · estado</span>
@@ -10,54 +16,86 @@
       <div class="dt-devbar__presentation" role="group" aria-label="Apresentação da demonstração">
         <DssButton variant="flat" round size="md" :icon="theme === 'dark' ? 'light_mode' : 'dark_mode'"
           :aria-label="theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'" @click="theme = theme === 'dark' ? 'light' : 'dark'" />
-        <DssBtnToggle v-model="brand" :options="brandOptions" variant="flat" aria-label="Marca da demonstração" />
+        <PgBrandPills v-model="brand" aria-label="Marca da demonstração" />
       </div>
     </div>
 
-    <main class="dt-stage">
-      <header class="dt-heading">
-        <div>
-          <p class="dt-eyebrow">WebComps → DSS</p>
-          <h1>DssDataTable</h1>
-          <p>Piloto operacional com API Vue 3 controlada e composição exclusiva de componentes DSS.</p>
-        </div>
-        <DssChip :label="mode === 'remote' ? 'Dados remotos' : 'Dados locais'" color="info" variant="outline" icon="database" />
-      </header>
+    <div class="dt-page" :data-brand="brand">
+      <DssLayout view="hHh lpR fFf" container class="dt-layout">
+        <DssAppBar :brand="brand" title="Solicitações" menu-aria-label="Abrir menu principal">
+          <template #actions>
+            <DssButton variant="flat" round size="md" icon="help_outline" aria-label="Ajuda" />
+            <DssButton variant="flat" round size="md" icon="account_circle" aria-label="Minha conta" />
+          </template>
+        </DssAppBar>
 
-      <DssDataTable
-        v-model="selected"
-        v-model:filter="filter"
-        v-model:pagination="pagination"
-        v-model:expanded-keys="expanded"
-        :rows="visibleRows"
-        :columns="columns"
-        :mode="mode"
-        :loading="scenario === 'loading' || remoteLoading"
-        :error="scenario === 'error' ? 'O serviço de solicitações não respondeu. Tente novamente.' : null"
-        :actions="actions"
-        :row-actions="rowActions"
-        :brand="brand"
-        :pagination="pagination"
-        title="Solicitações operacionais"
-        aria-label="Solicitações operacionais"
-        selection="multiple"
-        expandable
-        density="compact"
-        @request="handleRequest"
-        @action="handleAction"
-        @expand-request="handleExpand"
-      >
-        <template #expanded-row="{ row }">
-          <div class="dt-detail">
-            <div><span>Descrição</span><strong>{{ row.descricao }}</strong></div>
-            <div><span>Unidade</span><strong>{{ row.unidade }}</strong></div>
-            <div><span>Atualização</span><strong>{{ row.atualizacao }}</strong></div>
-          </div>
-        </template>
-      </DssDataTable>
+        <DssPageContainer>
+          <DssPage>
+            <DssPageShell rail-aria-label="Módulos do sistema">
+              <template #rail>
+                <DssPageShellRailItem
+                  v-for="m in modulos"
+                  :key="m.label"
+                  :icon="m.icone"
+                  :label="m.label"
+                  :active="m.ativo"
+                />
+              </template>
 
-      <DssBanner v-if="feedback" variant="info" rounded dense dismissible @dismiss="feedback = ''">{{ feedback }}</DssBanner>
-    </main>
+              <template #breadcrumb>
+                <DssBreadcrumbs separator="›" gutter="sm">
+                  <DssBreadcrumbsEl label="Operação" icon="looks_one" />
+                  <DssBreadcrumbsEl label="Solicitações operacionais" icon="looks_two" />
+                </DssBreadcrumbs>
+              </template>
+
+              <div class="dt-head">
+                <div class="dt-head__texto">
+                  <DssSectionTitle :level="1" size="lg" label="DssDataTable" />
+                  <p class="dt-nota">Piloto operacional com API Vue 3 controlada e composição exclusiva de componentes DSS.</p>
+                </div>
+                <DssChip :label="mode === 'remote' ? 'Dados remotos' : 'Dados locais'" color="info" variant="outline" icon="database" />
+              </div>
+
+              <DssCard variant="outlined" class="dt-bloco">
+                <DssDataTable
+                  v-model="selected"
+                  v-model:filter="filter"
+                  v-model:pagination="pagination"
+                  v-model:expanded-keys="expanded"
+                  :rows="visibleRows"
+                  :columns="columns"
+                  :mode="mode"
+                  :loading="scenario === 'loading' || remoteLoading"
+                  :error="scenario === 'error' ? 'O serviço de solicitações não respondeu. Tente novamente.' : null"
+                  :actions="actions"
+                  :row-actions="rowActions"
+                  :pagination="pagination"
+                  title="Solicitações operacionais"
+                  aria-label="Solicitações operacionais"
+                  selection="multiple"
+                  expandable
+                  density="compact"
+                  @request="handleRequest"
+                  @action="handleAction"
+                  @expand-request="handleExpand"
+                >
+                  <template #expanded-row="{ row }">
+                    <div class="dt-detail">
+                      <div><span>Descrição</span><strong>{{ row.descricao }}</strong></div>
+                      <div><span>Unidade</span><strong>{{ row.unidade }}</strong></div>
+                      <div><span>Atualização</span><strong>{{ row.atualizacao }}</strong></div>
+                    </div>
+                  </template>
+                </DssDataTable>
+              </DssCard>
+
+              <DssBanner v-if="feedback" variant="info" rounded dense dismissible @dismiss="feedback = ''">{{ feedback }}</DssBanner>
+            </DssPageShell>
+          </DssPage>
+        </DssPageContainer>
+      </DssLayout>
+    </div>
   </div>
 </template>
 
@@ -65,7 +103,17 @@
 import { computed, ref } from 'vue'
 import DssDataTable from '@components/composed/DssDataTable/DssDataTable.vue'
 import DssButton from '@components/base/DssButton/DssButton.vue'
-import DssBtnToggle from '@components/base/DssBtnToggle/DssBtnToggle.vue'
+import DssAppBar from '@components/composed/DssAppBar/DssAppBar.vue'
+import DssBreadcrumbs from '@components/base/DssBreadcrumbs/DssBreadcrumbs.vue'
+import DssBreadcrumbsEl from '@components/base/DssBreadcrumbsEl/DssBreadcrumbsEl.vue'
+import DssCard from '@components/base/DssCard/DssCard.vue'
+import DssLayout from '@components/base/DssLayout/DssLayout.vue'
+import DssPage from '@components/base/DssPage/DssPage.vue'
+import DssPageContainer from '@components/base/DssPageContainer/DssPageContainer.vue'
+import DssPageShell from '@components/composed/DssPageShell/DssPageShell.vue'
+import DssPageShellRailItem from '@components/composed/DssPageShell/DssPageShellRailItem.vue'
+import DssSectionTitle from '@components/base/DssSectionTitle/DssSectionTitle.vue'
+import { PgBrandPills } from './playground'
 import DssChip from '@components/base/DssChip/DssChip.vue'
 import DssBanner from '@components/base/DssBanner/DssBanner.vue'
 
@@ -79,7 +127,13 @@ const expanded = ref<Array<string | number>>([])
 const pagination = ref({ page: 1, rowsPerPage: 5, rowsNumber: 8 })
 const remoteLoading = ref(false)
 const feedback = ref('')
-const brandOptions = ['hub', 'water', 'waste'].map(value => ({ label: value[0].toUpperCase() + value.slice(1), value }))
+const modulos = [
+  { icone: 'public', label: 'Mapa', ativo: false },
+  { icone: 'description', label: 'Solicitações', ativo: true },
+  { icone: 'shopping_cart', label: 'Comercial', ativo: false },
+  { icone: 'paid', label: 'Financeiro', ativo: false },
+  { icone: 'bar_chart', label: 'Relatórios', ativo: false },
+]
 const scenarios = [
   { value: 'local', label: 'Local' }, { value: 'remote', label: 'Remoto' },
   { value: 'loading', label: 'Carregando' }, { value: 'empty', label: 'Vazio' },
@@ -128,16 +182,18 @@ function handleExpand(payload: { expanded: boolean; key: string | number }) { if
 </script>
 
 <style scoped>
-.dt-test{height:100%;overflow:auto;color:var(--dss-text-body);font-family:var(--dss-font-family-sans);background:var(--dss-surface-default)}
-.dt-devbar{position:sticky;top:0;z-index:var(--dss-z-index-sticky);display:flex;align-items:center;flex-wrap:wrap;gap:var(--dss-spacing-2);padding:var(--dss-spacing-1) var(--dss-spacing-5);background:var(--dss-surface-subtle);border-bottom:var(--dss-border-width-thin) dashed var(--dss-border-default)}
+.dt-test{display:flex;flex-direction:column;height:100%;color:var(--dss-text-body);font-family:var(--dss-font-family-sans);background:var(--dss-surface-default)}
+.dt-devbar{flex-shrink:0;display:flex;align-items:center;flex-wrap:wrap;gap:var(--dss-spacing-2);padding:var(--dss-spacing-1) var(--dss-spacing-5);background:var(--dss-surface-subtle);border-bottom:var(--dss-border-width-thin) dashed var(--dss-border-default)}
 .dt-devbar__states,.dt-devbar__presentation{display:flex;align-items:center;flex-wrap:wrap;gap:var(--dss-spacing-2)}
 .dt-devbar__states{flex:1;min-width:0}.dt-devbar__presentation{margin-inline-start:auto;flex-shrink:0}
-.dt-devbar__label,.dt-eyebrow{font-size:var(--dss-font-size-xs);text-transform:uppercase;font-weight:var(--dss-font-weight-semibold)}
-.dt-stage{display:flex;flex-direction:column;gap:var(--dss-spacing-4);padding:var(--dss-spacing-6);max-width:var(--dss-layout-content-max-width-wide);margin:0 auto}
-.dt-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--dss-spacing-4)}
-.dt-heading h1,.dt-heading p{margin:0}.dt-heading h1{font-size:var(--dss-font-size-2xl);line-height:var(--dss-line-height-tight)}
-.dt-heading>div{display:flex;flex-direction:column;gap:var(--dss-spacing-1)}.dt-heading>div>p:last-child{color:var(--dss-text-subtle)}
+.dt-devbar__label{font-size:var(--dss-font-size-xs);text-transform:uppercase;font-weight:var(--dss-font-weight-semibold)}
+.dt-page{flex:1;min-height:0;display:flex;flex-direction:column;font-size:var(--dss-font-size-sm)}
+.dt-layout{flex:1;min-height:0}
+.dt-head{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:var(--dss-spacing-3)}
+.dt-head__texto{display:flex;flex-direction:column;gap:var(--dss-spacing-1);min-width:0}
+.dt-nota{margin:0;color:var(--dss-text-subtle)}
+.dt-bloco{display:flex;flex-direction:column;padding:var(--dss-spacing-3);background:var(--dss-surface-default)}
 .dt-detail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--dss-spacing-4)}
 .dt-detail div{display:flex;flex-direction:column;gap:var(--dss-spacing-1)}.dt-detail span{font-size:var(--dss-font-size-xs);color:var(--dss-text-subtle)}
-@media (max-width: 768px){.dt-stage{padding:var(--dss-spacing-3)}.dt-heading{flex-direction:column}.dt-detail{grid-template-columns:1fr}}
+@media (max-width: 768px){.dt-head{flex-direction:column}.dt-detail{grid-template-columns:1fr}}
 </style>
