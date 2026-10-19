@@ -15,7 +15,10 @@
           <DssInput v-model="record.bairro" label="Bairro" />
         </template>
       </DssComposition>
-      <DssButton type="submit" label="Salvar cadastro" color="primary" />
+      <!-- ui-rules 02 §footer: ação do formulário alinhada à direita. -->
+      <div class="exemplo__acoes">
+        <DssButton type="submit" label="Salvar cadastro" color="primary" />
+      </div>
     </DssForm>
 
     <!-- 2 — Ações por linha: registro novo se exclui; gravado se inativa -->
@@ -99,6 +102,11 @@ const colunasDeMedidor = [{ name: 'numero', label: 'Número', field: 'numero', a
   display: flex;
   flex-direction: column;
   gap: var(--dss-spacing-3);
+}
+
+.exemplo__acoes {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .exemplo__eco {

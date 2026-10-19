@@ -165,13 +165,24 @@
                   role="group"
                   :aria-label="`Ações da linha ${String(identificador(scope.row))}`"
                 >
+                  <!--
+                    SÓ ÍCONE, como no DssDataGrid: a coluna é estreita e o
+                    rótulo empilhava as ações (medido: célula de 137px, duas
+                    ações em duas linhas). O nome continua inteiro no
+                    `aria-label`, com o identificador da linha — "Editar" sozinho
+                    não diz QUAL registro. `round` + tamanho padrão (`md`) =
+                    alvo de 44px (WCAG 2.5.5).
+                    Ação SEM ícone (o `icon` é opcional no tipo) mantém o
+                    rótulo: um botão só-ícone sem ícone seria um alvo vazio.
+                  -->
                   <DssButton
                     v-for="action in acoesDaLinha(scope.row)"
                     :key="action.name"
                     :icon="action.icon"
-                    :label="action.label"
+                    :label="action.icon ? undefined : action.label"
+                    :aria-label="`${action.label} ${String(identificador(scope.row))}`"
                     variant="flat"
-                    size="sm"
+                    :round="Boolean(action.icon)"
                     :color="action.color || 'primary'"
                     :disabled="disabled || loading || action.disabled"
                     @click="emitirAcao(action, scope.row)"

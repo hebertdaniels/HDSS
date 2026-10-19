@@ -74,9 +74,25 @@
     min-inline-size: var(--dss-touch-target-md);
   }
 
-  // O grupo de ações da linha acompanha o centro da coluna.
+  // A coluna de AÇÕES alinha à DIREITA (fim da linha), e a de controle
+  // continua no centro. É a última coluna: o fim dela é o fim da linha, e é
+  // ali que o olho procura o que fazer com o registro — o mesmo lugar das
+  // ações do cabeçalho do bloco e das do card no DssDataGrid. Centradas, as
+  // ações de linhas com 1 e com 2 botões ficavam desalinhadas entre si.
+  &__actions-cell {
+    text-align: end;
+  }
+
+  // O grupo de ações da linha encosta no fim da coluna e NUNCA quebra.
+  //
+  // Herdava o `flex-wrap: wrap` do bloco comum acima — certo para o cabeçalho,
+  // que tem largura para dobrar, errado aqui: a coluna abraça o conteúdo
+  // (`width: 1%`) e, com duas ações, empilhava os botões e dobrava a altura da
+  // linha. Lado a lado, como no DssDataGrid.
   &__row-actions {
-    justify-content: center;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    gap: var(--dss-spacing-1);
   }
 
   &__cell--left { text-align: left; }
@@ -90,13 +106,23 @@
     border-block-end: var(--dss-border-width-thin) solid var(--dss-border-subtle);
   }
 
+  // O vazio ocupa a LARGURA TODA e centra o DssEmptyState.
+  //
+  // O slot `no-data` do QTable renderiza dentro de `.q-table__bottom--nodata`,
+  // uma linha flex: sem `flex` próprio, este bloco ficava do tamanho do
+  // conteúdo, encostado à esquerda (medido: 37px de folga à esquerda contra
+  // 558px à direita). Como no DssDataGrid, o vazio fica no centro do bloco.
+  // O ajuste é no PRÓPRIO elemento deste componente, não no do Quasar.
   &__empty {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
     padding: var(--dss-spacing-6);
   }
 }
 
 // --------------------------------------------------------------------------
-//  CABEÇALHO DAS COLUNAS DE CONTROLE E DE AÇÕES
+//  CABEÇALHO DAS COLUNAS DE CONTROLE (centro) E DE AÇÕES (fim)
 //
 //  O modificador BEM (`.dss-data-table-cc__actions-cell`) tem especificidade
 //  (0,1,0) e PERDE para o `.q-table thead th` do Quasar, que é (0,1,2) e
@@ -106,7 +132,11 @@
 //  Não é caso de `!important` — basta um seletor descendente, que empata em
 //  elementos e ganha em classes (0,2,1).
 // --------------------------------------------------------------------------
-.dss-data-table-cc th.dss-data-table-cc__control-cell,
-.dss-data-table-cc th.dss-data-table-cc__actions-cell {
+.dss-data-table-cc th.dss-data-table-cc__control-cell {
   text-align: center;
+}
+
+// O rótulo "Ações" acompanha o conteúdo da coluna: no fim.
+.dss-data-table-cc th.dss-data-table-cc__actions-cell {
+  text-align: end;
 }

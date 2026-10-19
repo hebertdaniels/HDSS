@@ -480,9 +480,27 @@
           "source": "2-composition/_base.scss"
         },
         {
+          "property": "text-align",
+          "token": null,
+          "value": "end",
+          "source": "2-composition/_base.scss"
+        },
+        {
           "property": "justify-content",
           "token": null,
-          "value": "center",
+          "value": "flex-end",
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "flex-wrap",
+          "token": null,
+          "value": "nowrap",
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "gap",
+          "token": "--dss-spacing-1",
+          "value": null,
           "source": "2-composition/_base.scss"
         },
         {
@@ -513,6 +531,18 @@
           "property": "border-block-end",
           "token": "--dss-border-width-thin",
           "value": null,
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "flex",
+          "token": null,
+          "value": "1 1 auto",
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "justify-content",
+          "token": null,
+          "value": "center",
           "source": "2-composition/_base.scss"
         },
         {

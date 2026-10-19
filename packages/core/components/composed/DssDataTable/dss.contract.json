@@ -397,13 +397,49 @@
         {
           "property": "text-align",
           "token": null,
-          "value": "left",
+          "value": "center",
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "width",
+          "token": null,
+          "value": "1%",
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "min-inline-size",
+          "token": "--dss-touch-target-md",
+          "value": null,
           "source": "2-composition/_base.scss"
         },
         {
           "property": "text-align",
           "token": null,
-          "value": "center",
+          "value": "end",
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "justify-content",
+          "token": null,
+          "value": "flex-end",
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "flex-wrap",
+          "token": null,
+          "value": "nowrap",
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "gap",
+          "token": "--dss-spacing-1",
+          "value": null,
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "text-align",
+          "token": null,
+          "value": "left",
           "source": "2-composition/_base.scss"
         },
         {
@@ -488,6 +524,12 @@
       },
       {
         "name": "--dss-touch-target-md",
+        "usedIn": [
+          "default"
+        ]
+      },
+      {
+        "name": "--dss-spacing-1",
         "usedIn": [
           "default"
         ]

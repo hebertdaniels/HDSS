@@ -487,6 +487,18 @@
           "source": "2-composition/_base.scss"
         },
         {
+          "property": "text-align",
+          "token": null,
+          "value": "center",
+          "source": "2-composition/_base.scss"
+        },
+        {
+          "property": "text-align",
+          "token": null,
+          "value": "right",
+          "source": "2-composition/_base.scss"
+        },
+        {
           "property": "opacity",
           "token": null,
           "value": "0.6",

@@ -97,13 +97,18 @@
           <td v-if="rowActions.length || $slots['row-actions']" class="dss-data-table__actions-cell">
             <slot name="row-actions" :row="scope.row" :disabled="disabled || loading">
               <div class="dss-data-table__row-actions" role="group" :aria-label="`Ações da linha ${String(rowIdentifier(scope.row))}`">
+                <!-- Só ícone, `round`, tamanho padrão (`md` = 44px), nome no
+                     aria-label com o identificador da linha — o mesmo padrão
+                     do DssDataTableClaudeCode e do DssDataGrid. Ação sem
+                     ícone mantém o rótulo: só-ícone sem ícone é alvo vazio. -->
                 <DssButton
                   v-for="action in rowActions"
                   :key="action.name"
                   :icon="action.icon"
-                  :label="action.label"
+                  :label="action.icon ? undefined : action.label"
+                  :aria-label="`${action.label} ${String(rowIdentifier(scope.row))}`"
                   variant="flat"
-                  size="sm"
+                  :round="Boolean(action.icon)"
                   :color="action.color || 'primary'"
                   :disabled="disabled || loading || action.disabled"
                   @click="emitAction(action, scope.row)"

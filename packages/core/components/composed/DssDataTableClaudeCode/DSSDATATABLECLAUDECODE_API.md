@@ -23,7 +23,7 @@ Identificador em código: `DssDataTableClaudeCode`. Tipos em `types/data-table-c
 | `error` | `string \| null` | `null` | Mensagem de falha |
 | `density` | `DssTableDensity` | `'compact'` | Densidade da grade |
 | `actions` | `DssDataTableCcAction[]` | `[]` | Ações da barra do cabeçalho |
-| `rowActions` | `DssDataTableCcAction[] \| ((row) => DssDataTableCcAction[])` | `[]` | Ações por linha. Lista = as mesmas em todas; função = o consumidor decide por linha (`[]` deixa a linha sem botões) |
+| `rowActions` | `DssDataTableCcAction[] \| ((row) => DssDataTableCcAction[])` | `[]` | Ações por linha. Lista = as mesmas em todas; função = o consumidor decide por linha (`[]` deixa a linha sem botões). Renderizadas **só-ícone** (`flat`, `round`, tamanho `md` = 44px), lado a lado e alinhadas à **direita** da coluna, com `aria-label` "rótulo + identificador da linha" — como no `DssDataGrid`. Ação sem `icon` mantém o rótulo visível |
 | `expandable` | `boolean` | `false` | Habilita detalhe expansível |
 | `expandedKeys` | `Array<string \| number>` | `[]` | Chaves expandidas (v-model) |
 | `statusColumn` | `string \| null` | `null` | Coluna cujo valor é situação |

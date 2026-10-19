@@ -51,6 +51,31 @@
     white-space: nowrap;
   }
 
+  // Colunas de CONTROLE no centro — as colunas sintéticas declaram
+  // `align: 'center'`, e o cabeçalho já centra por isso; sem esta regra o
+  // checkbox e o botão de expandir ficavam à esquerda, sob um rótulo central.
+  &__expand-cell,
+  &__select-cell {
+    text-align: center;
+  }
+
+  // AÇÕES: a coluna abraça o conteúdo (`width: 1%` é o idioma de tabela para
+  // "a menor largura que couber" — os 44px fixos acima sobravam com 1 botão e
+  // faltavam com 2) e alinha à DIREITA, no fim da linha. Mesmo padrão do
+  // DssDataTableClaudeCode e do card do DssDataGrid.
+  &__actions-cell {
+    width: 1%;
+    min-inline-size: var(--dss-touch-target-md);
+    text-align: end;
+  }
+
+  // Lado a lado, encostado no fim, sem quebra.
+  &__row-actions {
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    gap: var(--dss-spacing-1);
+  }
+
   &__cell--left {
     text-align: left;
   }

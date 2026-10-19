@@ -55,6 +55,23 @@ describe('DssDataTable', () => {
     expect(wrapper.find('[role="group"]').attributes('aria-label')).toBe('Ações da linha 1')
   })
 
+  it('ação de linha com ícone é só-ícone, redonda e nomeada com o identificador', () => {
+    const wrapper = factory({ rowActions: [{ name: 'edit', label: 'Editar', icon: 'edit' }] })
+    const botao = wrapper.find('[role="group"]').findComponent({ name: 'DssButton' })
+    expect(botao.props('label')).toBeFalsy()
+    expect(botao.props('round')).toBe(true)
+    expect(botao.props('ariaLabel')).toBe('Editar 1')
+    // Sem `size`: o padrão `md` é o alvo de 44px (WCAG 2.5.5).
+    expect(botao.props('size') ?? 'md').toBe('md')
+  })
+
+  it('ação de linha SEM ícone mantém o rótulo — nunca um botão vazio', () => {
+    const wrapper = factory({ rowActions: [{ name: 'edit', label: 'Editar' }] })
+    const botao = wrapper.find('[role="group"]').findComponent({ name: 'DssButton' })
+    expect(botao.props('label')).toBe('Editar')
+    expect(botao.props('round')).toBe(false)
+  })
+
   it('seleciona uma linha e propaga update:modelValue', async () => {
     const wrapper = factory({ selection: 'multiple' })
     const checkbox = wrapper.findComponent({ name: 'DssCheckbox' })

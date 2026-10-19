@@ -108,6 +108,15 @@
       border-bottom: var(--dss-border-width-md) solid var(--dss-border-subtle);
       transition: color var(--dss-duration-250) ease;
 
+      /* O cabeçalho acompanha o `align` DECLARADO da coluna.
+         O QTable traduz `align` em `.text-center`/`.text-right` no <th>, mas
+         essas utilitárias vivem em `@layer quasar` e o `text-align: left` acima
+         é unlayered — vencia sempre. Medido (out/2026): <th class="text-right">
+         com `text-align: left` calculado; a coluna "Ações" tinha o conteúdo à
+         direita e o rótulo à esquerda. O padrão continua `left`. */
+      &.text-center { text-align: center; }
+      &.text-right  { text-align: right; }
+
       /* Sort icon — alinhamento e cor */
       .q-table__sort-icon {
         color: var(--dss-text-body);

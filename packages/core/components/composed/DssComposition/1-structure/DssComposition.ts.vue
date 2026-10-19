@@ -4,6 +4,11 @@
     - sozinha, é um GRUPO rotulado (um campo de formulário composto);
     - dentro do DssCompositionGroup, é o PAINEL da própria aba — e fica
       montada mesmo com a aba inativa (v-show), senão sai do DssForm (risco 5).
+
+    O TÍTULO da tabela acompanha o mesmo papel: sozinha, a coleção se nomeia
+    no cabeçalho; dentro do grupo, quem a nomeia é a ABA ("Contatos (2)"), e
+    repetir "Contatos" logo abaixo dela era redundância visual. O nome
+    acessível não muda — o painel continua `aria-labelledby` da aba.
   -->
   <div
     v-show="!grupo || grupo.ativa.value"
@@ -21,7 +26,7 @@
       :rows="modelValue"
       :columns="columns"
       :row-key="rowKey"
-      :title="label"
+      :title="grupo ? undefined : label"
       :aria-label="label"
       count-noun="registros"
       :selection="selection"

@@ -190,14 +190,34 @@ describe('DssDataTableClaudeCode', () => {
 
     const grupos = wrapper.findAll('[role="group"]')
     expect(grupos).toHaveLength(2)
-    const rotulosDe = (grupo) => grupo.findAllComponents({ name: 'DssButton' }).map((b) => b.props('label'))
-    expect(rotulosDe(grupos[0])).toEqual(['Excluir'])
-    expect(rotulosDe(grupos[1])).toEqual(['Inativar'])
+    // As ações da linha são só-ícone: o nome vive no aria-label, com o
+    // identificador da linha.
+    const nomesDe = (grupo) => grupo.findAllComponents({ name: 'DssButton' }).map((b) => b.props('ariaLabel'))
+    expect(nomesDe(grupos[0])).toEqual(['Excluir 1'])
+    expect(nomesDe(grupos[1])).toEqual(['Inativar 2'])
 
     await grupos[1].findComponent({ name: 'DssButton' }).trigger('click')
     const [payload] = wrapper.emitted('action').at(-1)
     expect(payload.action).toBe(inativar)
     expect(payload.row).toEqual(rows[1])
+  })
+
+  it('ação de linha com ícone é só-ícone, redonda e nomeada com o identificador', () => {
+    const wrapper = factory({ rowActions: [{ name: 'edit', label: 'Editar', icon: 'edit' }] })
+    const botao = wrapper.findAll('[role="group"]')[0].findComponent({ name: 'DssButton' })
+    expect(botao.props('label')).toBeFalsy()
+    expect(botao.props('icon')).toBe('edit')
+    expect(botao.props('round')).toBe(true)
+    expect(botao.props('ariaLabel')).toBe('Editar 1')
+    // Sem `size`: o padrão `md` é o alvo de 44px (WCAG 2.5.5).
+    expect(botao.props('size') ?? 'md').toBe('md')
+  })
+
+  it('ação de linha SEM ícone mantém o rótulo — nunca um botão vazio', () => {
+    const wrapper = factory({ rowActions: [{ name: 'edit', label: 'Editar' }] })
+    const botao = wrapper.findAll('[role="group"]')[0].findComponent({ name: 'DssButton' })
+    expect(botao.props('label')).toBe('Editar')
+    expect(botao.props('round')).toBe(false)
   })
 
   it('rowActions como função que devolve [] deixa a linha sem botões', () => {

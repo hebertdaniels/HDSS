@@ -120,6 +120,12 @@ alcança o `<td>` que o **QTable** desenha. No `<td>` do slot, não — medido:
 Então a coluna com `align: 'right'` e uma célula via slot **sem** a classe saem desalinhadas
 entre si. Repita o alinhamento da coluna na classe do `<td>`.
 
+**O cabeçalho acompanha o `align` da coluna (out/2026).** Antes, o `<th>` ficava sempre à
+esquerda: o `text-align: left` do DssTable (unlayered) vencia o `.text-right`/`.text-center`
+que o QTable aplica a partir do `align` (em `@layer quasar`). Medido: `<th class="text-right">`
+com `text-align: left` calculado. Agora `align: 'center' | 'right'` alinha o rótulo da coluna
+junto com o conteúdo; o padrão continua `left`.
+
 > **Lacuna conhecida.** `text-left` / `text-center` / `text-right` são classes utilitárias do
 > **Quasar**, não do DSS — é vendor vazando para a página do consumidor. Um `DssTableCell` que
 > lesse o `align` da coluna fecharia isso; a avaliação de esforço está em

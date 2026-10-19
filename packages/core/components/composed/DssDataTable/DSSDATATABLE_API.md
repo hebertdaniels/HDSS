@@ -19,7 +19,7 @@
 | `density` | `DssTableDensity` | `'standard'` | Densidade do motor tabular. |
 | `rowsPerPageOptions` | `number[]` | `[10, 25, 50]` | Passos da paginação. |
 | `actions` | `DssDataTableAction[]` | `[]` | Ações de topo ou lote. |
-| `rowActions` | `DssDataTableAction[]` | `[]` | Ações repetidas por linha. |
+| `rowActions` | `DssDataTableAction[]` | `[]` | Ações repetidas por linha. Renderizadas **só-ícone** (`flat`, `round`, tamanho `md` = 44px), lado a lado e alinhadas à **direita** da coluna, com `aria-label` "rótulo + identificador da linha". Ação sem `icon` mantém o rótulo visível. |
 | `expandable` | `boolean` | `false` | Habilita detalhes expansíveis. |
 | `expandedKeys` | `(string \| number)[]` | `[]` | Chaves expandidas. |
 | `disabled` | `boolean` | `false` | Interrompe as interações do bloco. |

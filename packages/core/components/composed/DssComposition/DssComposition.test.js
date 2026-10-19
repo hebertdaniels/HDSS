@@ -124,6 +124,31 @@ describe('DssComposition', () => {
     expect(b.element.style.display).toBe('none')
   })
 
+  it('dentro do grupo, a aba nomeia a coleção — a tabela não repete o título', async () => {
+    const wrapper = mount(
+      {
+        components: { DssCompositionGroup, DssComposition },
+        template: `
+          <DssCompositionGroup>
+            <DssComposition name="a" label="Contatos" :model-value="[]" :columns="columns" row-key="id" />
+          </DssCompositionGroup>
+        `,
+        data: () => ({ columns }),
+      },
+      { attachTo: document.body },
+    )
+    await nextTick()
+    const tabela = wrapper.findComponent(DssDataTableClaudeCode)
+    expect(tabela.props('title')).toBeFalsy()
+    expect(wrapper.find('.dss-composition .dss-section-title').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('sozinha, a coleção se nomeia no cabeçalho da tabela', () => {
+    const wrapper = factory()
+    expect(wrapper.findComponent(DssDataTableClaudeCode).props('title')).toBe('Contatos')
+  })
+
   it('oferece Incluir na barra e Editar/Excluir nas linhas por padrão', () => {
     const tabela = factory().findComponent(DssDataTableClaudeCode)
     expect(tabela.props('actions').map((a) => a.intent)).toEqual(['add'])
